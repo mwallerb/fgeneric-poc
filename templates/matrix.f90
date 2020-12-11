@@ -1,11 +1,38 @@
+#ifdef MAKE_BASE
+
+! Module providing type(matrix) and specializations for each type
+module mmatrix
+    use mmatrix_base
+    use fmmatrix
+    use dmmatrix
+    use cmmatrix
+    use zmmatrix
+end
+
+module mmatrix_base
+    type :: matrix
+    end type
+
+    interface matrix_resize
+    end interface
+end module mmatrix_base
+
+#else
 #include "defines.f90"
 
 module GENERIC(mmatrix)
+    use mmatrix_base
+
     ! matrix type
-    type :: GENERIC(matrix)
+    type, extends(matrix) :: GENERIC(matrix)
         VALUE_TYPE, allocatable :: buffer(:, :)
         integer :: order
     end type GENERIC(matrix)
+
+    interface matrix_resize
+        module procedure GENERIC(matrix_resize)
+    end interface
+
 contains
     subroutine GENERIC(matrix_init)(this)
         type(GENERIC(matrix)), intent(inout) :: this
@@ -35,3 +62,4 @@ contains
         end if
     end subroutine
 end module GENERIC(mmatrix)
+#endif

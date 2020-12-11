@@ -2,12 +2,39 @@
 
 
 
+! Module providing type(matrix) and specializations for each type
+module mmatrix
+    use mmatrix_base
+    use fmmatrix
+    use dmmatrix
+    use cmmatrix
+    use zmmatrix
+end
+
+module mmatrix_base
+    type :: matrix
+    end type
+
+    interface matrix_resize
+    end interface
+end module mmatrix_base
+
+
+
+
 module fmmatrix
+    use mmatrix_base
+
     ! matrix type
-    type :: fmatrix
+    type, extends(matrix) :: fmatrix
         real*4, allocatable :: buffer(:, :)
         integer :: order
     end type fmatrix
+
+    interface matrix_resize
+        module procedure fmatrix_resize
+    end interface
+
 contains
     subroutine fmatrix_init(this)
         type(fmatrix), intent(inout) :: this
@@ -40,13 +67,19 @@ end module fmmatrix
 
 
 
-
 module dmmatrix
+    use mmatrix_base
+
     ! matrix type
-    type :: dmatrix
+    type, extends(matrix) :: dmatrix
         real*8, allocatable :: buffer(:, :)
         integer :: order
     end type dmatrix
+
+    interface matrix_resize
+        module procedure dmatrix_resize
+    end interface
+
 contains
     subroutine dmatrix_init(this)
         type(dmatrix), intent(inout) :: this
@@ -79,13 +112,19 @@ end module dmmatrix
 
 
 
-
 module cmmatrix
+    use mmatrix_base
+
     ! matrix type
-    type :: cmatrix
+    type, extends(matrix) :: cmatrix
         complex*8, allocatable :: buffer(:, :)
         integer :: order
     end type cmatrix
+
+    interface matrix_resize
+        module procedure cmatrix_resize
+    end interface
+
 contains
     subroutine cmatrix_init(this)
         type(cmatrix), intent(inout) :: this
@@ -118,13 +157,19 @@ end module cmmatrix
 
 
 
-
 module zmmatrix
+    use mmatrix_base
+
     ! matrix type
-    type :: zmatrix
+    type, extends(matrix) :: zmatrix
         complex*16, allocatable :: buffer(:, :)
         integer :: order
     end type zmatrix
+
+    interface matrix_resize
+        module procedure zmatrix_resize
+    end interface
+
 contains
     subroutine zmatrix_init(this)
         type(zmatrix), intent(inout) :: this
